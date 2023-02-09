@@ -1,0 +1,40 @@
+import 'package:flutter/material.dart';
+
+void showOverlay({context, String message="",int delay=0}) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final overlay = Overlay.of(context);
+    final overlayState = Overlay.of(context);
+    final overlayEntry = OverlayEntry(
+      builder: (BuildContext context) {
+        return Positioned(
+          top: MediaQuery.of(context).size.height * 0.4,
+          left: MediaQuery.of(context).size.width * 0.1,
+          right: MediaQuery.of(context).size.width * 0.1,
+          bottom: MediaQuery.of(context).size.height * 0.4,
+          child: Container(
+            padding: EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  message,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    overlayState?.insert(overlayEntry);
+    // ElevatedButton(
+    //     onPressed: () {
+    //       overlayEntry.remove();
+    //     },
+    //     child: Text("Cancel"));
+    Future.delayed(Duration(seconds: delay)).then((_) => overlayEntry.remove());
+  });
+}

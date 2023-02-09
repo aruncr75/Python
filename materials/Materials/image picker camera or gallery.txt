@@ -1,0 +1,94 @@
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
+import 'dart:io';
+import 'dart:typed_data';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // Declare a variable to store the image file
+  File? _image;
+  final imagePicker = ImagePicker();
+  Uint8List?
+      imageResizedUint8List; // Declare the imageResizedUint8List variable here
+
+  // Function to open the camera or file manager and select an image
+  Future _selectImage(
+      {@required ImageSource source = ImageSource.camera}) async {
+    // Use the image_picker package to prompt the user to select an image
+    var image = await imagePicker.pickImage(source: source);
+    //image Sizeeee----
+    int imageSizeInMB = await image!.length();
+    print("${imageSizeInMB.toString()} imageSizeInMB----======");
+    // Decode the image file into a List<int>
+    List<int> imageBytes = await image.readAsBytes();
+    img.Image imageDecoded = img.decodeImage(imageBytes)!;
+    double aspectRatio = imageDecoded.width / imageDecoded.height;
+    if (aspectRatio > 1) {
+      print("Landscape image");
+      // Resize the image
+      img.Image imageResized =
+          img.copyResize(imageDecoded, width: 1280, height: 720);
+      // Encode the image back to a List<int>
+      List<int> imageResizedBytes = img.encodePng(imageResized);
+
+      // Convert the List<int> to a Uint8List
+      imageResizedUint8List = Uint8List.fromList(imageResizedBytes);
+    } else {
+      print("Portrait image");
+      // Resize the image
+      img.Image imageResized =
+          img.copyResize(imageDecoded, width: 720, height: 1280);
+      // Encode the image back to a List<int>
+      List<int> imageResizedBytes = img.encodePng(imageResized);
+
+      // Convert the List<int> to a Uint8List
+      imageResizedUint8List = Uint8List.fromList(imageResizedBytes);
+    }
+
+    // Set the image file to the state variable
+    setState(() {
+      _image = File.fromRawPath(imageResizedUint8List!);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+            // Display the image file on the screen
+            child: SizedBox(
+          width: 200,
+          height: 200,
+          child: _image == null
+              ? const Text('No image selected.')
+              : Image.memory(imageResizedUint8List ??
+                  Uint8List(0)), // Add a null check here
+        )),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            FloatingActionButton(
+              // When the button is pressed, call the _selectImage function with ImageSource.camera
+              onPressed: () => _selectImage(source: ImageSource.camera),
+              child: const Icon(Icons.camera_alt),
+            ),
+            const SizedBox(width: 10),
+            FloatingActionButton(
+              // When the button is pressed, call the _selectImage function with ImageSource.gallery
+              onPressed: () => _selectImage(source: ImageSource.gallery),
+              child: const Icon(Icons.photo_library),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

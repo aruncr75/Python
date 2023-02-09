@@ -1,0 +1,47 @@
+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
+
+8. Reuse x.of(context)
+As you know, when you want to use theming in Flutter, you need to write things like Theme.of(context).textTheme.bodyText1. That is fine, but if you have to do it multiple times in the same widget, I recommend moving it to the top of the build method. You can do that easily by just copying the line I wrote and putting it in a variable like this: final theme = Theme.of(context).textTheme. Now every time you need the theme, you would just write theme.bodyText1 in your widget
+
+
+
+https://github.com/londonappbrewery/Flutter-Course-Resources
+
+font_awesome_flutter: ^10.2.1
+
+https://marketplace.visualstudio.com/items?itemName=Nash.awesome-flutter-snippets
+
+Stack(
+     alignment: Alignment.center,
+     children: <Widget>[
+     if (_visible) ...[
+          spaceAnim(),
+          //Nested if-else
+          if (_visible) ...[
+              spaceAnim(),
+          ]else ...[
+              galaxyAnim(),
+           ],
+     ]else ...[
+         galaxyAnim(),
+     ],
+  ],
+),
+
+
+Tracing to Measure Execution Time
+
+void DoSomeThing(){
+  Timeline.startSync(“DoSomeThing”);
+  // Write your code
+  Timeline.finishSync();
+}
+
+int mark =10,
+    total = 20,
+    amount = 30;
+
+
+.....
+logger: ^1.1.0
+.....
